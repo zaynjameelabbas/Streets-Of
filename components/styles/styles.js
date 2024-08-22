@@ -94,5 +94,13 @@ export const styles = StyleSheet.create({
       paddingHorizontal: 10,
       fontSize: 16,
       fontWeight: '600',
+    },
+
+    // Back Button
+    backBtn: {
+      position: 'absolute',
+      top: 40,
+      left: 20,
+      zIndex: 1,
     }
 });
