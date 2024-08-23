@@ -12,6 +12,10 @@ export default function WelcomeScreen() {
   const handleLoginPress = () => {
       navigation.navigate('LoginScreen');
   };
+
+  const handleSignUpPress = () => {
+      navigation.navigate('SignUpScreen');
+  };
   
   return (
     <View style={styles.container}>
@@ -43,7 +47,7 @@ export default function WelcomeScreen() {
 
         {/* Create Account Button */}
         <View style={styles.container}>
-          <TouchableOpacity style={styles.loginBtn}>
+          <TouchableOpacity style={styles.loginBtn} onPress={handleSignUpPress}>
             <Text style={styles.loginBtnText}>Create a Free Account!</Text>
           </TouchableOpacity>
           <StatusBar style="auto" />
