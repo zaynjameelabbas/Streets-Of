@@ -46,7 +46,7 @@ export const styles = StyleSheet.create({
     },
     loginBtnText: {
       color: '#000000',
-      fontWeight: '500',
+      fontWeight: '600',
       fontSize: 14
     },
     googleBtn: {
