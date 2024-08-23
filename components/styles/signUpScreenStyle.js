@@ -1,17 +1,15 @@
-import { StyleSheet } from 'react-native';
-
+import { StyleSheet } from "react-native";
 
 export const styles = StyleSheet.create({
-    
     // Main Container
     container: {
-      flex: 1,
-      backgroundColor: '#000000',
-      alignItems: 'left',
-      paddingTop: '20%',
-      paddingLeft: '10%',
+        flex: 1,
+        backgroundColor: '#000000',
+        alignItems: 'left',
+        paddingTop: '20%',
+        paddingLeft: '10%',
     },
-
+  
     // Title Styles
     titleText: {
         paddingTop: '5%',
@@ -27,7 +25,6 @@ export const styles = StyleSheet.create({
         fontSize: 32,
         color: '#FF0092'
     },
-
 
     // Input Styles
 
@@ -64,24 +61,23 @@ export const styles = StyleSheet.create({
     },   
 
     inputText: {
+        flex: 1,
         color: '#FF0092',
         fontFamily: 'Inter',
         fontWeight: '400',
         fontSize: 14,
-        marginLeft: 10,
-        marginRight: 10,
     },
 
     inputIcon: {
         color: '#FF0092',
         fontSize: 20,
-        alignContent: 'center',
+        marginRight: 10,
     },
 
     inputIconEye: {
         color: '#FF0092',
         fontSize: 20,
-        marginLeft: '50%',
+        marginLeft: '0%',
         alignContent: 'flex-end',
     },
 
@@ -99,85 +95,15 @@ export const styles = StyleSheet.create({
         paddingVertical: 10,
     },
 
-    // Forgot Password
-    forgotPasswordContainer: {
-        alignSelf: 'flex-start',
-        marginTop: '5%',
-        marginRight: 10,
-    },
-
-    forgotPasswordText: {
-        color: '#ffffff',
-        fontFamily: 'Inter',
-        fontSize: 14,
-    },
-
-    forgotPasswordLink: {
-        color: '#FF0092',
-        fontWeight: '600',
-    },
-
-    // Divider Styles:
-    dividerContainer: {
-        flexDirection: 'row',
-        alignItems: 'center',
-        paddingTop: '5%',
-        paddingRight: '10%',
-    },
-
-    dividerLine: {
+    btnContainer: {
         flex: 1,
-        height: 1,
-        backgroundColor: "#FF0092",
-    },
-
-    dividerText:{
-        color: '#FF0092',
-        paddingHorizontal: 10,
-        fontSize: 16,
-        fontWeight: '600',
-    },
-
-    // Google Button
-    googleBtn: {
-        backgroundColor: '#5382EB',
-        borderRadius: 20,
-        padding: 15,
-        width: '90%',
+        backgroundColor: '#000000',
         alignItems: 'center',
-        flexDirection: 'row',
-        borderWidth: 1,
-        marginBottom: 10,
-    },
-    googleBtnText: {
-        color: '#ffffff',
-        fontWeight: '700',
-        fontSize: 18,
-        marginLeft: 10,
-    },
-    googleIcon: {
-        width: 20,
-        height: 20,
-        borderRadius: 10,
+        paddingTop: '10%',
+        width: '90%',
     },
 
-    buttonContainer: {
-        flexDirection: 'column',
-        alignItems: 'flex-start',
-        justifyContent: 'space-between',
-        width: '100%',
-        height: '15%',
-        marginTop: '10%',
-    },
-
-    loginBtnContainer: {
-        flexDirection: 'column',
-        alignItems: 'flex-start',
-        width: '100%',
-        height: '15%',
-    },
-
-    loginBtn: {
+    signUpBtn: {
         backgroundColor: '#ffffff',
         borderRadius: 20,
         padding: 10,
@@ -188,8 +114,7 @@ export const styles = StyleSheet.create({
         justifyContent: 'center',
         marginTop: '15%',
     },
-
-    loginBtnText: {
+    signUpBtnText: {
         color: 'black',
         fontSize: 18,
         fontWeight: 'bold',

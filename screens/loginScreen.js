@@ -4,11 +4,14 @@ import { styles } from '../components/styles/loginScreenStyles.js';
 import { useNavigation } from '@react-navigation/native';
 import Ionicons from '@expo/vector-icons/Ionicons';
 
-import { View, TextField, Text, Image } from 'react-native';
+import { View, TextField, Text, Image, TextInput } from 'react-native';
 
 import { Input, InputField, InputIcon, InputSlot } from '@/components/ui/input';
 
 import { EyeIcon, EyeOffIcon } from 'lucide-react-native';
+
+import { signInWithEmailAndPassword, getAuth, fetchSignInMethodsForEmail } from 'firebase/auth';
+import { auth } from '@/firebaseConfig';
 
 const googleIcon = require('../assets/googleIcon.png');
 
@@ -21,10 +24,45 @@ export default function LoginScreen() {
     };
 
     // Password 
-    const [showPassword, setPassword] = useState(false);
+    const [showPassword, setShowPassword] = useState(false);
 
-    const handleTogglePassword = () => {
-        setPassword(!showPassword);
+    // const handleTogglePassword = () => {
+    //     setShowPassword(!showShowPassword);
+    // };
+
+    const toggleShowPassword = () => {
+        setShowPassword(!showPassword);
+    };
+
+    const [identifier, setIdentifier] = useState('');
+    const [username, setUsername] = useState('');
+    const [password, setPassword] = useState('');
+
+    // Login Function
+    const handleLogin = async () => {
+        try {
+          // First, check if the identifier is an email
+          const isEmail = identifier.includes('@');
+          let email = identifier;
+    
+          if (!isEmail) {
+            // If it's not an email, we need to find the corresponding email
+            const methods = await fetchSignInMethodsForEmail(auth, `${identifier}@example.com`);
+            if (methods.length > 0) {
+              email = `${identifier}@example.com`;
+            } else {
+              throw new Error('User not found');
+            }
+          }
+    
+          const userCredential = await signInWithEmailAndPassword(auth, email, password);
+          const user = userCredential.user;
+          console.log('User logged in successfully:', user.email);
+          navigation.navigate('HomeScreen');
+        } catch (error) {
+          console.error('Error logging in:', error.code, error.message);
+          Alert.alert('Login Error', error.message);
+        }
     };
 
     return (
@@ -42,33 +80,46 @@ export default function LoginScreen() {
 
             {/* Input Fields */}
             <View style={styles.inputContainer}>
-                <Text style={styles.inputHeading}>Username or Email</Text>
-                <Input 
-                    variant='outline' 
-                    size='lg' 
-                    style={styles.input}
-                >
-                    <InputField 
-                        placeholder='Enter...' 
+                <Text style={styles.inputHeading}>Username</Text>
+                <View style={styles.inputWithBorder}>
+                    <Ionicons name="person-outline" style={styles.inputIcon} />
+                    <TextInput
+                        placeholder="Enter your username"
+                        placeholderTextColor="#FF0092"
                         style={styles.inputText}
+                        value={identifier}
+                        onChangeText={setIdentifier}
                     />
-                </Input>
+                </View>
+            </View>
 
+            {/* Password Input */}
+            <View style={styles.inputContainer}>
                 <Text style={styles.inputHeading}>Password</Text>
-                <Input variant='outline' size='lg' style={styles.input}>
-                    <InputField 
-                        placeholder='Enter...' 
-                        type={showPassword ? "text" : "password"}
+                <View style={styles.inputWithBorder}>
+                    <Ionicons name="lock-closed-outline" style={styles.inputIcon} />
+                    <TextInput
+                        placeholder="Enter your password"
+                        placeholderTextColor="#FF0092"
                         style={styles.inputText}
+                        value={password}
+                        onChangeText={setPassword}
+                        secureTextEntry={!showPassword}
                     />
-                    <InputSlot onPress={handleTogglePassword} style={styles.inputSlot}>
-                        <InputIcon style={styles.inputIcon}>
-                            {showPassword ? 
-                                <EyeIcon  /> 
-                                : <EyeOffIcon  />}
-                        </InputIcon>
-                    </InputSlot>
-                </Input>
+                    <TouchableOpacity onPress={toggleShowPassword}>
+                        <Ionicons
+                            name={showPassword ? "eye-outline" : "eye-off-outline"}
+                            style={styles.inputIconEye}
+                        />
+                    </TouchableOpacity>
+                </View>
+            </View>
+
+            {/* Login Button */}
+            <View style={styles.loginBtnContainer}>
+                <TouchableOpacity style={styles.loginBtn} onPress={handleLogin}>
+                    <Text style={styles.loginBtnText}>Login Now!</Text>
+                </TouchableOpacity>
             </View>
 
             {/* Forgot Password */}

@@ -4,7 +4,7 @@ import { StyleSheet, Text, View, TextInput, Button, Alert } from "react-native";
 import { auth } from "@/firebaseConfig";
 import { createUserWithEmailAndPassword } from "firebase/auth";
 
-export default function SignUpScreen() {
+export default function ExampleSignUp() {
   const createUser = () => {
     createUserWithEmailAndPassword(auth, email, password)
       .then((userCredential) => {
