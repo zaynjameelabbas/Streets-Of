@@ -64,24 +64,23 @@ export const styles = StyleSheet.create({
     },   
 
     inputText: {
+        flex: 1,
         color: '#FF0092',
         fontFamily: 'Inter',
         fontWeight: '400',
         fontSize: 14,
-        marginLeft: 10,
-        marginRight: 10,
     },
 
     inputIcon: {
         color: '#FF0092',
         fontSize: 20,
-        alignContent: 'center',
+        marginRight: 10,
     },
 
     inputIconEye: {
         color: '#FF0092',
         fontSize: 20,
-        marginLeft: '50%',
+        marginLeft: '0%',
         alignContent: 'flex-end',
     },
 

@@ -1,131 +1,112 @@
 import React, { useState } from "react";
-import { StyleSheet, Text, View, TextInput, Button, Alert, TouchableOpacity } from "react-native";
+import { View, Text, TextInput, TouchableOpacity, Alert } from "react-native";
 import { useNavigation } from '@react-navigation/native';
 import Ionicons from '@expo/vector-icons/Ionicons';
 import { styles } from "@/components/styles/signUpScreenStyle";
-import { Input, InputField, InputIcon, InputSlot } from '@/components/ui/input';
-import { EyeIcon, EyeOffIcon } from 'lucide-react-native';
-
-import { auth } from "@/firebaseConfig";
-import { createUserWithEmailAndPassword, updateProfile } from "firebase/auth";
-
+import { auth, db } from "@/firebaseConfig";
+import { createUserWithEmailAndPassword } from "firebase/auth";
+import { doc, setDoc } from 'firebase/firestore';
+import AsyncStorage from '@react-native-async-storage/async-storage';
 
 export default function SignUpScreen() {
-    
-    const navigation = useNavigation();
+  const navigation = useNavigation();
+  const [username, setUsername] = useState('');
+  const [email, setEmail] = useState('');
+  const [password, setPassword] = useState('');
+  const [showPassword, setShowPassword] = useState(false);
 
-    const handleBackPress = () => {
-        navigation.navigate('WelcomeScreen');
-    };
+  const handleBackPress = () => {
+    navigation.navigate('WelcomeScreen');
+  };
 
-    const [username, setUsername] = useState('');
-    const [email, setEmail] = useState('');
-    const [password, setPassword] = useState('');
-    const [showPassword, setShowPassword] = useState(false);
+  const toggleShowPassword = () => {
+    setShowPassword(!showPassword);
+  };
 
-    const toggleShowPassword = () => {
-        setShowPassword(!showPassword);
-    };
+  const createUser = async () => {
+    try {
+      const userCredential = await createUserWithEmailAndPassword(auth, email, password);
+      const user = userCredential.user;
+      
+      const userData = {
+        userEmail: user.email,
+        userName: username,
+        createdAt: new Date().toISOString(),
+      };
 
-    const createUser = () => {
-        createUserWithEmailAndPassword(auth, email, password)
-            .then((userCredential) => {
-                const user = userCredential.user;
-                return updateProfile(user, {
-                    displayName: username
-                }).then(() => {
-                    console.log("User created successfully:", user.email);
-                    console.log("Username set:", username);
-                    Alert.alert("Success", `User ${user.email} created successfully with username: ${username}!`);
-                    // Navigate to the HomeScreen
-                    navigation.navigate('HomeScreen');
-                });
-            })
-            .catch((error) => {
-                const errorCode = error.code;
-                const errorMessage = error.message;
-                console.error("Error creating user:", errorCode, errorMessage);
-                Alert.alert("Error creating user", `${errorCode}: ${errorMessage}`);
-            });
-    };
-    return (
+      await setDoc(doc(db, 'user', user.uid), userData);
+      await AsyncStorage.setItem('userData', JSON.stringify(userData));
 
-        <View style={styles.container}>
-            {/* Back Button */}
-            <TouchableOpacity style={styles.backBtn}>
-                <Ionicons 
-                    style={styles.backBtn} 
-                    name='chevron-back-outline'
-                    onPress={handleBackPress} />
-            </TouchableOpacity>
+      console.log('User created and logged in successfully:', user.email);
+      navigation.navigate('HomeScreen');
+    } catch (error) {
+      console.error('Error creating user:', error.code, error.message);
+      Alert.alert('Sign Up Error', error.message);
+    }
+  };
 
-            {/* Title */}
-            <Text style={styles.titleText}>Sign Up!</Text>
+  return (
+    <View style={styles.container}>
+      <TouchableOpacity style={styles.backBtn} onPress={handleBackPress}>
+        <Ionicons name='chevron-back-outline' style={styles.backBtn} />
+      </TouchableOpacity>
 
-            {/* Email Input */}
-            <View style={styles.inputContainer}>
-                <Text style={styles.inputHeading}>Email</Text>
-                <Input variant="outline" size="md" style={styles.inputWithBorder}>
-                    <InputSlot style={styles.inputSlot}>
-                        <InputIcon as={Ionicons} name="mail-outline" style={styles.inputIcon} />
-                    </InputSlot>
-                    <InputField
-                        placeholder="Enter your email"
-                        placeholderTextColor="#FF0092"
-                        style={styles.inputText}
-                        value={email}
-                        onChangeText={setEmail}
-                    />
-                </Input>
-            </View>
+      <Text style={styles.titleText}>Sign Up!</Text>
 
-            {/* Username Input */}
-            <View style={styles.inputContainer}>
-                <Text style={styles.inputHeading}>Username</Text>
-                <Input variant="outline" size="md" style={styles.inputWithBorder}>
-                    <InputSlot style={styles.inputSlot}>
-                        <InputIcon as={Ionicons} name="person-outline" style={styles.inputIcon} />
-                    </InputSlot>
-                    <InputField 
-                        placeholder="Enter your username"
-                        placeholderTextColor="#FF0092"
-                        style={styles.inputText}
-                        value={username}
-                        onChangeText={setUsername}
-                    />
-                </Input>
-            </View>
-
-            {/* Password Input */}
-            <View style={styles.inputContainer}>
-                <Text style={styles.inputHeading}>Password</Text>
-                <View style={styles.inputWithBorder}>
-                    <Ionicons name="lock-closed-outline" style={styles.inputIcon} />
-                    <TextInput
-                        placeholder="Enter your password"
-                        placeholderTextColor="#FF0092"
-                        style={styles.inputText}
-                        value={password}
-                        onChangeText={setPassword}
-                        secureTextEntry={!showPassword}
-                    />
-                    <TouchableOpacity onPress={toggleShowPassword}>
-                        <Ionicons
-                            name={showPassword ? "eye-outline" : "eye-off-outline"}
-                            style={styles.inputIconEye}
-                        />
-                    </TouchableOpacity>
-                </View>
-            </View>
-
-            {/* Sign Up Button */}
-            <View style={styles.btnContainer}>
-                <TouchableOpacity style={styles.signUpBtn} onPress={createUser}>
-                    <Text style={styles.signUpBtnText}>Sign Up!</Text>
-                </TouchableOpacity>
-            </View>
-
-        
+      <View style={styles.inputContainer}>
+        <Text style={styles.inputHeading}>Email</Text>
+        <View style={styles.inputWithBorder}>
+          <Ionicons name="mail-outline" style={styles.inputIcon} />
+          <TextInput
+            placeholder="Enter your email"
+            placeholderTextColor="#FF0092"
+            style={styles.inputText}
+            value={email}
+            onChangeText={setEmail}
+          />
         </View>
-    );
+      </View>
+
+      <View style={styles.inputContainer}>
+        <Text style={styles.inputHeading}>Username</Text>
+        <View style={styles.inputWithBorder}>
+          <Ionicons name="person-outline" style={styles.inputIcon} />
+          <TextInput
+            placeholder="Enter your username"
+            placeholderTextColor="#FF0092"
+            style={styles.inputText}
+            value={username}
+            onChangeText={setUsername}
+          />
+        </View>
+      </View>
+
+      <View style={styles.inputContainer}>
+        <Text style={styles.inputHeading}>Password</Text>
+        <View style={styles.inputWithBorder}>
+          <Ionicons name="lock-closed-outline" style={styles.inputIcon} />
+          <TextInput
+            placeholder="Enter your password"
+            placeholderTextColor="#FF0092"
+            style={styles.inputText}
+            value={password}
+            onChangeText={setPassword}
+            secureTextEntry={!showPassword}
+          />
+          <TouchableOpacity onPress={toggleShowPassword}>
+            <Ionicons
+              name={showPassword ? "eye-outline" : "eye-off-outline"}
+              style={styles.inputIconEye}
+            />
+          </TouchableOpacity>
+        </View>
+      </View>
+
+      <View style={styles.btnContainer}>
+        <TouchableOpacity style={styles.signUpBtn} onPress={createUser}>
+          <Text style={styles.signUpBtnText}>Sign Up!</Text>
+        </TouchableOpacity>
+      </View>
+    </View>
+  );
 }
